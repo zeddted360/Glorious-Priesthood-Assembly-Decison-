@@ -107,35 +107,53 @@ const MembershipForm = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
       <Card className="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-        <CardHeader className="space-y-1 flex justify-center items-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-8">
-          <div className="relative w-[12rem] h-[12rem] overflow-hidden rounded-full">
+        {/* Header Section */}
+        <CardHeader className="relative flex flex-col justify-center items-center text-white py-12">
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/90 to-purple-600/90" />
+
+          {/* Logo Image */}
+          <div className="relative w-32 h-32 rounded-full overflow-hidden z-10">
             <Image
               src="/GPA_LOGO.jpg"
               alt="GPA Logo"
-              fill
-              className="object-cover"
+              width={128}
+              height={128}
+              className="object-cover w-full h-full"
+              sizes="(max-width: 768px) 100vw, 128px"
+              priority
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-center uppercase">
-            The Glorious Priesthood Assembly (GPA)
+
+          {/* Title and Description */}
+          <CardTitle className="text-4xl font-bold text-center uppercase mt-4 z-10 animate-fade-in">
+            Glorious Priesthood Assembly (GPA)
           </CardTitle>
-          <CardDescription className="text-center uppercase text-lg">
+          <CardDescription className="text-center uppercase text-lg mt-2 z-10 animate-fade-in text-white/90">
             Generation of Kings and Priests
           </CardDescription>
-          <div className="text-center uppercase text-2xl font-semibold">
+
+          {/* Decision Card */}
+          <div className="text-center uppercase text-2xl font-semibold mt-4 z-10 animate-fade-in">
             Decision Card
           </div>
-          <div className="text-center italic">
+
+          {/* Invitation Text */}
+          <div className="text-center italic mt-2 z-10 animate-fade-in">
             I invite Jesus Christ into my heart and life today
           </div>
-          <br />
-          <span className="flex items-center justify-center gap-2">
+
+          {/* Date */}
+          <div className="flex items-center justify-center gap-2 mt-4 z-10 animate-fade-in">
             <FaCalendarAlt />
             <b>Date</b>: {new Date().toDateString()}
-          </span>
+          </div>
         </CardHeader>
+
+        {/* Form Section */}
         <CardContent className="p-6 text-gray-900 dark:text-gray-100">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Full Name */}
               <div className="space-y-2">
