@@ -35,12 +35,15 @@ import {
   FaUserFriends,
   FaCalendarAlt,
 } from "react-icons/fa";
+import DecisionMade from "./RadioGroup";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const MembershipForm = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
-    altPhone: "",
+    whatsapp: "",
     email: "",
     address: "",
     lga: "",
@@ -48,25 +51,59 @@ const MembershipForm = () => {
     sex: "",
     CountryOfOrigin: "",
     stateOfOrigin: "",
-    city: "", // New field for non-Nigerians
+    city: "",
     formerChurch: "",
     invitedBy: "",
     decisionMade: "",
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [error, setError] = useState("");
+  // submit function
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Form submitted:", formData);
+    const form = e.target as HTMLFormElement;
+    try {
+      setIsSubmitting(true);
+      setError("");
+      const res = await fetch(`http://localhost:3000/api/decision`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const errorData: { error: string } = await res.json();
+        throw new Error(
+          errorData ? errorData.error : "Ooops Something went wrong"
+        );
+      }
+      const data: { message: string } = await res.json();
+      setFormData((prev) => ({
+        ...prev,
+        fullName: "",
+        phone: "",
+        whatsapp: "",
+        email: "",
+        address: "",
+        lga: "",
+        age: "",
+        sex: "",
+        CountryOfOrigin: "",
+        stateOfOrigin: "",
+        city: "",
+        formerChurch: "",
+        invitedBy: "",
+        decisionMade: "",
+      }));
+      alert(data.message);
       setIsSubmitting(false);
-    }, 2000);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unknow Error occured");
+      setIsSubmitting(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -79,6 +116,13 @@ const MembershipForm = () => {
       ...prev,
       stateOfOrigin: value,
       lga: "", // Reset LGA when state changes
+    }));
+  };
+
+  const handleDecisionChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      decisionMade: value,
     }));
   };
 
@@ -102,6 +146,8 @@ const MembershipForm = () => {
     formData.phone &&
     formData.email &&
     formData.address &&
+    formData.decisionMade &&
+    formData.sex &&
     (isNigeria ? formData.stateOfOrigin && formData.lga : formData.city);
 
   return (
@@ -152,7 +198,7 @@ const MembershipForm = () => {
 
         {/* Form Section */}
         <CardContent className="p-6 text-gray-900 dark:text-gray-100">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6">
             {/* Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Full Name */}
@@ -176,7 +222,7 @@ const MembershipForm = () => {
               <div className="space-y-2">
                 <Label htmlFor="phone" className="flex items-center gap-2">
                   <FaPhone />
-                  Telephone *
+                  Phone *
                 </Label>
                 <Input
                   id="phone"
@@ -191,15 +237,15 @@ const MembershipForm = () => {
 
               {/* WhatsApp */}
               <div className="space-y-2">
-                <Label htmlFor="altPhone" className="flex items-center gap-2">
+                <Label htmlFor="whatsapp" className="flex items-center gap-2">
                   <FaWhatsapp />
                   WhatsApp
                 </Label>
                 <Input
-                  id="altPhone"
-                  name="altPhone"
+                  id="whatsapp"
+                  name="whatsapp"
                   placeholder="Enter WhatsApp phone"
-                  value={formData.altPhone}
+                  value={formData.whatsapp}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                 />
@@ -425,7 +471,7 @@ const MembershipForm = () => {
                   <FaMapMarkerAlt />
                   Address *
                 </Label>
-                <Input
+                <Textarea
                   id="address"
                   name="address"
                   placeholder="Enter your address"
@@ -440,23 +486,17 @@ const MembershipForm = () => {
             {/* Decision Made */}
             <div className="space-y-2 md:col-span-2">
               <div className="text-lg font-semibold">Decision made?</div>
-              <div className="flex flex-col space-y-2">
-                {["Salvation", "Recommitment", "First Timer"].map((option) => (
-                  <div key={option} className="flex items-center space-x-2">
-                    <Input
-                      type="radio"
-                      name="decisionMade"
-                      value={option}
-                      checked={formData.decisionMade === option}
-                      onChange={handleChange}
-                      className="w-4 h-4"
-                    />
-                    <Label>{option}</Label>
-                  </div>
-                ))}
-              </div>
+              <DecisionMade
+                value={formData.decisionMade}
+                onChange={handleDecisionChange}
+              />
             </div>
-
+            {error && (
+              <Alert className="border-red-500 bg-red-100 text-red-600 ">
+                <AlertTitle>Oops!</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             {/* Submit Button */}
             <Button
               type="submit"
