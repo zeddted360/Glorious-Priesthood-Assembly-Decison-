@@ -38,6 +38,8 @@ import {
 import DecisionMade from "./RadioGroup";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import PhoneInputWithCountryCode from "./PhoneInputWithCountryCode";
+import WhatsappInputWithCountryCode from "./WhatsappWithCountryCode";
 
 const MembershipForm = () => {
   const [formData, setFormData] = useState({
@@ -58,10 +60,25 @@ const MembershipForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
+
+   const handlePhoneChange = (phone: string, isValid: boolean) => {
+     setFormData((prev) => ({ ...prev, phone }));
+     setIsPhoneValid(isValid);
+  };
+
+   const handleWhatsappNumberChange = (whatsapp: string, isValid: boolean) => {
+     setFormData((prev) => ({ ...prev, whatsapp }));
+     setIsPhoneValid(isValid);
+  };
+  
   // submit function
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
+    if (!isPhoneValid) {
+      setError("Invalid phone number");
+      return;
+    }
     try {
       setIsSubmitting(true);
       setError("");
@@ -126,6 +143,7 @@ const MembershipForm = () => {
     }));
   };
 
+  
   const nigerianStates = Object.keys(nigerianStatesLGA).sort();
 
   const getLGAsForState = (state: string) => {
@@ -150,6 +168,9 @@ const MembershipForm = () => {
     formData.sex &&
     (isNigeria ? formData.stateOfOrigin && formData.lga : formData.city);
 
+  console.log(formData);
+  
+  
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
       <Card className="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
@@ -198,7 +219,11 @@ const MembershipForm = () => {
 
         {/* Form Section */}
         <CardContent className="p-6 text-gray-900 dark:text-gray-100">
-          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            autoComplete="off"
+            className="space-y-6"
+          >
             {/* Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Full Name */}
@@ -219,38 +244,11 @@ const MembershipForm = () => {
               </div>
 
               {/* Phone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <FaPhone />
-                  Phone *
-                </Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                />
-              </div>
-
+              <PhoneInputWithCountryCode onPhoneChange={handlePhoneChange} />
               {/* WhatsApp */}
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="flex items-center gap-2">
-                  <FaWhatsapp />
-                  WhatsApp
-                </Label>
-                <Input
-                  id="whatsapp"
-                  name="whatsapp"
-                  placeholder="Enter WhatsApp phone"
-                  value={formData.whatsapp}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                />
-              </div>
-
+              <WhatsappInputWithCountryCode
+                onPhoneChange={handleWhatsappNumberChange}
+              />
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2">
