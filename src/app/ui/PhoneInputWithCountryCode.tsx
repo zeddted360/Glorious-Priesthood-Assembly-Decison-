@@ -22,6 +22,19 @@ const PhoneInputWithCountryCode = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isValid, setIsValid] = useState(true);
 
+    const validatePhoneNumber = (number: string, code: string) => {
+      const country = countryCodes.find((c) => c.code === code);
+      if (country) {
+        const isValid = country.regex.test(number);
+        setIsValid(isValid);
+        onPhoneChange(`${code}${number}`, isValid);
+      } else {
+        setIsValid(false);
+        onPhoneChange(`${code}${number}`, false);
+      }
+    };
+
+
   const handleCountryCodeChange = (value: string) => {
     setCountryCode(value);
     validatePhoneNumber(phoneNumber, value);
@@ -33,17 +46,6 @@ const PhoneInputWithCountryCode = ({
     validatePhoneNumber(value, countryCode);
   };
 
-  const validatePhoneNumber = (number: string, code: string) => {
-    const country = countryCodes.find((c) => c.code === code);
-    if (country) {
-      const isValid = country.regex.test(number);
-      setIsValid(isValid);
-      onPhoneChange(`${code}${number}`, isValid);
-    } else {
-      setIsValid(false);
-      onPhoneChange(`${code}${number}`, false);
-    }
-  };
 
   return (
     <div className="space-y-2">
@@ -59,9 +61,9 @@ const PhoneInputWithCountryCode = ({
           </SelectTrigger>
 
           <SelectContent>
-            {countryCodes.map(({ code, country }) => (
-              <SelectItem key={country} value={code}>
-                {country}({code})
+            {countryCodes.map((item,index) => (
+              <SelectItem key={item.country} value={item.code}>
+                {item.country}({item.code})
               </SelectItem>
             ))}
           </SelectContent>

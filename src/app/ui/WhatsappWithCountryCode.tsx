@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaPhone, FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
 import { countryCodes } from "@/data/countryCode";
 
 const WhatsappInputWithCountryCode = ({
@@ -48,7 +48,7 @@ const WhatsappInputWithCountryCode = ({
     <div className="space-y-2">
       <Label htmlFor="phone" className="flex items-center gap-2">
         <FaWhatsapp />
-       Whatsapp *
+        Whatsapp *
       </Label>
       <div className="flex gap-2">
         {/* Country Code Selector */}
@@ -58,9 +58,9 @@ const WhatsappInputWithCountryCode = ({
           </SelectTrigger>
 
           <SelectContent>
-            {countryCodes.map(({ code, country }, i) => (
-              <SelectItem key={country} value={code}>
-                {country}({code})
+            {countryCodes.map((item, index) => (
+              <SelectItem key={item.country} value={item.code}>
+                {item.country}({item.code})
               </SelectItem>
             ))}
           </SelectContent>
