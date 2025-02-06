@@ -1,9 +1,7 @@
-import NewMemberForm from "./ui/signup";
+// pages/index.js
+
+import LandingPage from "./ui/LandingPage";
 
 export default function Home() {
-  return (
-    <div className="container">
-      <NewMemberForm/>
-    </div>
-  );
+  return <LandingPage />;
 }

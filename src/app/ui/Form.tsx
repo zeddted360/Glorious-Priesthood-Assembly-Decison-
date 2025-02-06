@@ -28,8 +28,10 @@ import nigerianStatesLGA from "@/data/nigerianStatesLGA";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const Form = () => {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [error, setError] = useState("");
@@ -149,6 +151,7 @@ const Form = () => {
       }));
       alert(data.message);
       setIsSubmitting(false);
+      router.push('/dashboard');
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unknow Error occured");
       setIsSubmitting(false);
@@ -430,6 +433,12 @@ const Form = () => {
           "Submit Decision"
         )}
       </Button>
+      <div className="submitted">
+        <strong>Already Submitted?</strong>{" "}
+        <span onClick={()=>router.push('/dashboard')} className="text-blue-800 text-sm cursor-pointer">
+          Go to Dashboard
+        </span>
+      </div>
     </form>
   );
 };

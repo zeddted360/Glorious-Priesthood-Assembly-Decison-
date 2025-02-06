@@ -72,6 +72,7 @@ body {
 }
 
 
-.card-container  {
+
+section.header {
   background: url('/form-bg.jpg') no-repeat center center/cover;
 }
