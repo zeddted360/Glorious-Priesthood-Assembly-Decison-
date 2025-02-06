@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 
 export async function POST(request: Request) {
   try {
-    const data: IVisitorInfo = await request.json();
+    const data: IVisitorInfo = await request.json()
 
     // Format phone number for WhatsApp (remove non-numeric characters)
     const whatsappNumber = data.phone.replace(/\D/g, "");
