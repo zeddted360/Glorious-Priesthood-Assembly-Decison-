@@ -1,4 +1,4 @@
-import { decision } from "@/schema/decisionSchema";
+import { memberModel } from "@/schema/decisionSchema";
 import { connectDb } from "@/utils/connectDb";
 import { sendNewMemberEmail } from "@/utils/sendMail";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,7 +15,7 @@ export const POST = async (request: NextRequest) => {
       lga,
       age = null,
       sex,
-      CountryOfOrigin,
+      countryOfOrigin,
       stateOfOrigin,
       city = null,
       formerChurch = null,
@@ -27,7 +27,7 @@ export const POST = async (request: NextRequest) => {
     await connectDb();
 
     // Check for duplicates
-    const existingUser = await decision.findOne({
+    const existingUser = await memberModel.findOne({
       $or: [{ fullName }, { phone }, { whatsapp }, { email }],
     });
 
@@ -47,7 +47,7 @@ export const POST = async (request: NextRequest) => {
     }
 
     // Create a new decision entry
-    await decision.create({
+    await memberModel.create({
       fullName,
       phone,
       whatsapp,
@@ -56,7 +56,7 @@ export const POST = async (request: NextRequest) => {
       lga,
       age,
       sex,
-      CountryOfOrigin,
+      countryOfOrigin,
       stateOfOrigin,
       city,
       formerChurch,
@@ -69,7 +69,7 @@ export const POST = async (request: NextRequest) => {
       whatsapp,
       email,
       state: stateOfOrigin,
-      country: CountryOfOrigin,
+      country: countryOfOrigin,
       invitedBy,
     });
     // Return success response

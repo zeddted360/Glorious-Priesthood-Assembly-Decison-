@@ -24,15 +24,10 @@ const ChurchMembersList = ({ members }: { members: string }) => {
       member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.invitedBy?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  // console.log(filteredMembers);
-
   // Calculate soul-winning metrics
   const getMemberInviteCount = (memberName: string | undefined) => {
-    // note the member name is the fullname
-    console.log("The member name is", memberName);
     return Members.filter((m) => m.invitedBy === memberName).length;
   };
-
   // Sort members by number of invites (for top soul-winners)
   const topSoulWinners = [...new Set(Members.map((m) => m.invitedBy))]
     .filter(Boolean)
@@ -99,7 +94,7 @@ const ChurchMembersList = ({ members }: { members: string }) => {
       </div>
 
       {/* Members Table */}
-      <Card>
+      <Card id="members">
         <CardHeader>
           <CardTitle>Church Members</CardTitle>
         </CardHeader>
@@ -109,6 +104,7 @@ const ChurchMembersList = ({ members }: { members: string }) => {
               <TableRow>
                 <TableHead>Full Name</TableHead>
                 <TableHead>Contact</TableHead>
+                <TableHead>State/City</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Invited By</TableHead>
                 <TableHead>Souls Won</TableHead>
@@ -128,8 +124,9 @@ const ChurchMembersList = ({ members }: { members: string }) => {
                       </div>
                     </div>
                   </TableCell>
+                  <TableCell> {member?.city || member.stateOfOrigin}</TableCell>
                   <TableCell>
-                    {member?.city}, {member?.stateOfOrigin}
+                    {member?.address}
                     <div className="text-sm text-muted-foreground">
                       {member?.CountryOfOrigin}
                     </div>

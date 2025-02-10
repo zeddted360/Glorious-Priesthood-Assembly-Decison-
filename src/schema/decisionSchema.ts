@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const desicionSchema = new mongoose.Schema(
+const memberSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
@@ -36,7 +36,7 @@ const desicionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    CountryOfOrigin: {
+    countryOfOrigin: {
       type: String,
       required: true,
     },
@@ -57,11 +57,17 @@ const desicionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // Added fields to match the UI requirements
+    department: {
+      type: String,
+      enum: ["choir", "ushering", "protocol", "children", "media", "none"],
+      default: "none",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export const decision =
-  mongoose.models.decision || mongoose.model("decision", desicionSchema);
+export const memberModel =
+  mongoose.models.Member || mongoose.model("Member", memberSchema);

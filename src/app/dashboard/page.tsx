@@ -1,4 +1,4 @@
-import { decision } from "@/schema/decisionSchema";
+import { memberModel } from "@/schema/decisionSchema";
 import ChurchMembersList from "./ChurchMembersList";
 import { connectDb } from "@/utils/connectDb";
 
@@ -26,7 +26,7 @@ export interface IMembers {
 async function getMembers() {
   try {
     await connectDb();
-    const members = await decision.find({}).sort({createdAt:-1});
+    const members = await memberModel.find({}).sort({createdAt:-1});
     return members;
   } catch (error) {
     console.error("Error: ", error instanceof Error && error.message);

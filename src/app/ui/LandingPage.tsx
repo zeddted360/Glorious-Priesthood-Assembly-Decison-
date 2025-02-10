@@ -1,22 +1,48 @@
 "use client";
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, BookOpen, Heart } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  BookOpen,
+  Heart,
+  ChevronDown,
+} from "lucide-react";
 import { VisitorDialog } from "./Visitus";
 import GetDirection from "./GetDirection";
-
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import Image from "next/image";
 const LandingPage = () => {
   const [visitDialogOpen, setVisitDialogOpen] = React.useState(false);
+  const router = useRouter();
+
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="header relative h-[600px] flex items-center justify-center">
-        <div className="absolute inset-0 bg-gray-900/60" />
-        <div className="relative container mx-auto px-4 text-center text-gray-50 bg-gray-100/20 rounded-md py-4 ">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
+      <section
+        id="hero"
+        className="header relative h-screen flex items-center justify-center"
+        aria-labelledby="hero-title"
+      >
+        <div className="absolute inset-0 bg-gray-900/70" />
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative container mx-auto px-4 text-center text-gray-50"
+        >
+          <h1
+            id="hero-title"
+            className="text-4xl md:text-6xl font-bold mb-6 text-white"
+          >
             Welcome to Glorious Priesthood Assembly
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
@@ -24,70 +50,90 @@ const LandingPage = () => {
             lives through His word
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Button
+              onClick={() => setVisitDialogOpen(true)}
+              size="lg"
+              className="bg-primary hover:bg-primary/90"
+              aria-label="Join Sunday Service"
+            >
               Join Us This Sunday
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="text-gray-900 border-white hover:bg-white/10"
+              className="text-gray-800 border-white hover:bg-white/20 transition-colors"
+              onClick={() => router.push("/learnmore")}
+              aria-label="Learn More About Church"
             >
               Learn More
             </Button>
           </div>
-        </div>
+          <motion.button
+            onClick={() => scrollToSection("services")}
+            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white animate-bounce"
+            aria-label="Scroll to Services"
+          >
+            <ChevronDown size={32} />
+          </motion.button>
+        </motion.div>
       </section>
 
       {/* Service Times Section */}
-      <section className="py-16 bg-white">
+      <section
+        id="services"
+        className="py-16 bg-white"
+        aria-labelledby="services-title"
+      >
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Service Times</h2>
+            <h2 id="services-title" className="text-3xl font-bold mb-4">
+              Service Times
+            </h2>
             <p className="text-gray-600">Join us for worship and fellowship</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <Calendar className="h-6 w-6 text-primary" />
-                  <div>
-                    <h3 className="font-semibold mb-2">Sunday Service</h3>
-                    <p className="text-gray-600">
-                      <strong>First service</strong> : 6:30AM
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Second service</strong> : 8:00AM
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <Clock className="h-6 w-6 text-primary" />
-                  <div>
-                    <h3 className="font-semibold mb-2">
-                      Tusesdays Word Encounter
-                    </h3>
-                    <p className="text-gray-600">5:00PM</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <Users className="h-6 w-6 text-primary" />
-                  <div>
-                    <h3 className="font-semibold mb-2">
-                      Thursdays Home Cell Fellowship
-                    </h3>
-                    <p className="text-gray-600">6:00 PM</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {[
+              {
+                icon: Calendar,
+                title: "Sunday Service",
+                times: [
+                  { name: "First service", time: "6:30AM" },
+                  { name: "Second service", time: "8:00AM" },
+                ],
+              },
+              {
+                icon: Clock,
+                title: "Tuesdays Word Encounter",
+                times: [{ name: "Evening Session", time: "5:00PM" }],
+              },
+              {
+                icon: Users,
+                title: "Thursdays Home Cell Fellowship",
+                times: [{ name: "Fellowship", time: "6:00 PM" }],
+              },
+            ].map((service, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Card className="h-full">
+                  <CardContent className="p-6 flex flex-col justify-center h-full">
+                    <div className="flex items-start space-x-4">
+                      <service.icon className="h-6 w-6 text-primary" />
+                      <div>
+                        <h3 className="font-semibold mb-2">{service.title}</h3>
+                        {service.times.map((timeSlot, idx) => (
+                          <p key={idx} className="text-gray-600">
+                            <strong>{timeSlot.name}</strong>: {timeSlot.time}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -96,11 +142,14 @@ const LandingPage = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <img
-                src="/api/placeholder/600/400"
+            <div className="relative w-[25rem] h-[25rem] rounded-md overflow-hidden">
+              <Image
+                src="/form-bg.jpg"
                 alt="Church building"
-                className="rounded-lg shadow-lg"
+                className="object-cover"
+                fill
+                sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw 33vw"
+                loading="lazy"
               />
             </div>
             <div>

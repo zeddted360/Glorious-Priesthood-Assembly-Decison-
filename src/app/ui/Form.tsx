@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,13 +9,12 @@ import {
   FaEnvelope,
   FaGlobeAfrica,
   FaMapMarkerAlt,
+  FaPhone,
   FaTransgender,
   FaUser,
   FaUserFriends,
 } from "react-icons/fa";
 import DecisionMade from "./RadioGroup";
-import PhoneInputWithCountryCode from "./PhoneInputWithCountryCode";
-import WhatsappInputWithCountryCode from "./WhatsappWithCountryCode";
 import {
   Select,
   SelectContent,
@@ -34,6 +33,7 @@ const Form = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
+  const [isWhatsappValid, setIsWhatsappValid] = useState(false);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -45,7 +45,7 @@ const Form = () => {
     lga: "",
     age: "",
     sex: "",
-    CountryOfOrigin: "",
+    countryOfOrigin: "",
     stateOfOrigin: "",
     city: "",
     formerChurch: "",
@@ -53,11 +53,6 @@ const Form = () => {
     decisionMade: "",
   });
 
-  const handlePhoneChange = (phone: string, isValid: boolean) => {
-    setFormData((prev) => ({ ...prev, phone }));
-    setIsPhoneValid(isValid);
-  };
-  // submit function
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -68,12 +63,8 @@ const Form = () => {
     }));
   };
 
-  const handleWhatsappNumberChange = (whatsapp: string, isValid: boolean) => {
-    setFormData((prev) => ({ ...prev, whatsapp }));
-    setIsPhoneValid(isValid);
-  };
-
-  const isNigeria = formData.CountryOfOrigin === "Nigeria";
+  
+  const isNigeria = formData.countryOfOrigin === "Nigeria";
 
   const nigerianStates = Object.keys(nigerianStatesLGA).sort();
 
@@ -103,14 +94,38 @@ const Form = () => {
     }));
   };
 
-  const isFormValid =
-    formData.fullName &&
-    formData.phone &&
-    formData.email &&
-    formData.address &&
-    formData.decisionMade &&
-    formData.sex &&
-    (isNigeria ? formData.stateOfOrigin && formData.lga : formData.city);
+  const validatePhoneNumber = (number: string, isWhatsapp = false) => {
+    const nigerianPhoneRegex = /^\+234[789][01]\d{8}$/;
+    const internationalPhoneRegex = /^\+[1-9]\d{6,14}$/;
+
+    if (formData.countryOfOrigin === "Nigeria") {
+      return nigerianPhoneRegex.test(number);
+    }
+    return internationalPhoneRegex.test(number);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    setIsPhoneValid(validatePhoneNumber(phone));
+    setFormData((prev) => ({ ...prev, phone }));
+  };
+
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const whatsapp = e.target.value;
+    setIsWhatsappValid(validatePhoneNumber(whatsapp, true));
+    setFormData((prev) => ({ ...prev, whatsapp }));
+  };
+ const isFormValid =
+   formData.fullName &&
+   isPhoneValid &&
+   isWhatsappValid &&
+   formData.email &&
+   formData.address &&
+   formData.decisionMade &&
+   formData.sex &&
+   (formData.countryOfOrigin === "Nigeria"
+     ? formData.stateOfOrigin && formData.lga
+     : formData.city);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -142,7 +157,7 @@ const Form = () => {
         lga: "",
         age: "",
         sex: "",
-        CountryOfOrigin: "",
+        countryOfOrigin: "",
         stateOfOrigin: "",
         city: "",
         formerChurch: "",
@@ -151,7 +166,7 @@ const Form = () => {
       }));
       alert(data.message);
       setIsSubmitting(false);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unknow Error occured");
       setIsSubmitting(false);
@@ -177,13 +192,6 @@ const Form = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           />
         </div>
-
-        {/* Phone */}
-        <PhoneInputWithCountryCode onPhoneChange={handlePhoneChange} />
-        {/* WhatsApp */}
-        <WhatsappInputWithCountryCode
-          onPhoneChange={handleWhatsappNumberChange}
-        />
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email" className="flex items-center gap-2">
@@ -231,9 +239,9 @@ const Form = () => {
             Country *
           </Label>
           <Select
-            name="CountryOfOrigin"
+            name="countryOfOrigin"
             onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, CountryOfOrigin: value }))
+              setFormData((prev) => ({ ...prev, countryOfOrigin: value }))
             }
           >
             <SelectTrigger className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
@@ -356,6 +364,50 @@ const Form = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
           />
         </div>
+        {/* phone */}
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="flex items-center gap-2">
+            <FaPhone /> Phone *
+          </Label>
+          <Input
+            id="phone"
+            name="phone"
+            placeholder="e.g. +234 xxx xxx xxxx"
+            required
+            value={formData.phone}
+            onChange={handlePhoneChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+          {!isPhoneValid && formData.phone && (
+            <span className="text-red-500 text-sm">
+              {formData.countryOfOrigin === "Nigeria"
+                ? "Invalid Nigerian phone number (must be +234 XXX XXX XXXX)"
+                : "Invalid international phone number"}
+            </span>
+          )}
+        </div>
+        {/* whatsapp */}
+        <div className="space-y-2">
+          <Label htmlFor="whatsapp" className="flex items-center gap-2">
+            <FaPhone /> WhatsApp *
+          </Label>
+          <Input
+            id="whatsapp"
+            name="whatsapp"
+            placeholder="e.g. +2347053541229"
+            required
+            value={formData.whatsapp}
+            onChange={handleWhatsappChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+          />
+          {!isWhatsappValid && formData.whatsapp && (
+            <span className="text-red-500 text-sm">
+              {formData.countryOfOrigin === "Nigeria"
+                ? "Invalid Nigerian WhatsApp number (must be +234XXXXXXXXXX)"
+                : "Invalid international WhatsApp number"}
+            </span>
+          )}
+        </div>
 
         {/* Former Church */}
         <div className="space-y-2">
@@ -435,7 +487,10 @@ const Form = () => {
       </Button>
       <div className="submitted">
         <strong>Already Submitted?</strong>{" "}
-        <span onClick={()=>router.push('/dashboard')} className="text-blue-800 text-sm cursor-pointer">
+        <span
+          onClick={() => router.push("/dashboard")}
+          className="text-blue-800 text-sm cursor-pointer"
+        >
           Go to Dashboard
         </span>
       </div>

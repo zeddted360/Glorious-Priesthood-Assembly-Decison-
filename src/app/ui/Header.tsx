@@ -1,20 +1,25 @@
-// "use client"
-// import React,{useState} from "react";
+"use client";
 import Link from "next/link";
-import { Menu, X, ChevronDown, Phone, Mail, MapPin, Clock } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, Phone, Mail, Clock } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
-  // const [isOpen, setIsOpen] = React.useState(false);
-
+  const pathname = usePathname();
   const menuItems = [
     { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Services", href: "/services" },
+    { label: "Dashbord", href: "/dashboard" },
+    { label: "About", href: "/learnmore" },
     { label: "Members", href: "/members" },
     { label: "Contact", href: "/contact" },
-    { label: "Decision Card", href: "/" },
+    { label: "Decision Card", href: "/decision" },
   ];
 
   return (
@@ -25,11 +30,11 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <span className="flex items-center">
               <Phone className="h-4 w-4 mr-2" />
-              +234 123 456 7890
+              +234 703 258 7014
             </span>
             <span className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
-              info@gloriouspa.org
+              www.gpaglobal@gmail.com
             </span>
           </div>
           <div className="flex items-center space-x-4">
@@ -50,12 +55,12 @@ const Header = () => {
                 alt="GPA Logo"
                 fill
                 className="object-cover"
-                // sizes="(max-width: 768px) 100vw, 128px"
                 quality={100}
                 loading="lazy"
+                sizes="(max-width: 768px) 100vw, (max-width:1200px) 50vw, 33vw"
               />
             </div>
-            <Link href="/dashboard" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <div className="font-serif text-md md:text-2xl font-bold">
                 Glorious Priesthood Assembly
               </div>
@@ -67,7 +72,9 @@ const Header = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-md font-medium transition-colors hover:text-primary"
+                className={`text-md font-medium transition-colors hover:text-primary ${
+                  item.href === pathname ? "text-green-600" : ""
+                }`}
               >
                 {item.label}
               </Link>
@@ -80,12 +87,16 @@ const Header = () => {
               <Menu className="h-6 w-6" />
             </SheetTrigger>
             <SheetContent side="right">
+              <SheetTitle>Navigation</SheetTitle>
+              <br />
               <nav className="flex flex-col space-y-4">
                 {menuItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-lg font-medium"
+                    className={`text-md font-medium transition-colors hover:text-primary ${
+                      item.href === pathname ? "text-green-600" : ""
+                    }`}
                   >
                     {item.label}
                   </Link>

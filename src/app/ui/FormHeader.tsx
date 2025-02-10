@@ -19,7 +19,7 @@ const FormHeader = () => {
           alt="GPA Logo"
           fill
           className="object-cover w-full h-full"
-          sizes="(max-width: 768px) 100vw, 128px"
+          sizes="(max-width: 768px) 100vw, (max-width:1200px) 50vw, 33vw"
           priority
         />
       </div>
