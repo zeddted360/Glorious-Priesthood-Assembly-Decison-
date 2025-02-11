@@ -21,11 +21,16 @@ export interface IMembers {
   __v?: number;
 }
 
-
 export default async function MembersPage() {
   try {
     const response = await fetch(
-      "https://glorious-priesthood-assembly-decison.vercel.app/api/members"
+      "https://glorious-priesthood-assembly-decison.vercel.app/api/members",
+      {
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
     if (!response.ok) {
