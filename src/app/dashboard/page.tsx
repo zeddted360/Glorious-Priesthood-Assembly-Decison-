@@ -1,6 +1,4 @@
-import { memberModel } from "@/schema/decisionSchema";
 import ChurchMembersList from "./ChurchMembersList";
-import { connectDb } from "@/utils/connectDb";
 
 export interface IMembers {
   _id?: string;
@@ -23,17 +21,23 @@ export interface IMembers {
   __v?: number;
 }
 
-async function getMembers() {
-  try {
-    await connectDb();
-    const members = await memberModel.find({}).sort({createdAt:-1});
-    return members;
-  } catch (error) {
-    console.error("Error: ", error instanceof Error && error.message);
-  }
-}
 
 export default async function MembersPage() {
-    const members: IMembers[] | undefined = await getMembers();
-  return <ChurchMembersList members={JSON.stringify(members)} />;
+  try {
+    const response = await fetch(
+      "https://glorious-priesthood-assembly-decison.vercel.app/api/members"
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const members: IMembers[] = await response.json();
+
+    return <ChurchMembersList members={JSON.stringify(members)} />;
+  } catch (error) {
+    console.error("Failed to fetch members:", error);
+    // You might want to add error UI here
+    return <div>Failed to load members. Please try again later.</div>;
+  }
 }
